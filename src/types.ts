@@ -41,11 +41,12 @@ export type AccountGeneratorFn = () => Promise<UserAccount>
 export type RegisterAccountFn = (user: UserAccount) => Promise<void>
 export type RemoveAccountFn = (username: string) => Promise<void>
 export type ConsentFn = (
+  shouldConsent: boolean,
   consentPage: AxiosResponse,
   user: UserAccount,
   jar: CookieJar,
   requestedScopes: string[]
-) => Promise<URL>
+) => Promise<AxiosResponse>
 export type LoginFn = (loginPage: AxiosResponse, user: UserAccount, jar: CookieJar) => AxiosResponse
 
 export type UserAccount = {
@@ -99,8 +100,8 @@ export type RefreshTokenDetails = {
  * @property [refreshToken] - Returned refresh token details
  */
 export type AccessTokenResponse = {
-  accessToken: AccessTokenDetails
-  refreshToken?: RefreshTokenDetails
+  accessTokenDetails: AccessTokenDetails
+  refreshTokenDetails?: RefreshTokenDetails
 }
 
 export type CaseFn = (description: string, callback: (...args: any[]) => Promise<void>) => void
@@ -124,10 +125,10 @@ export type TestFunctions = {
  * @property fetchAccessToken - Test access token fetching
  * @property fetchRefreshToken - Test refresh token fetching
  */
-export type AuthorizationCodeGrantTester = {
-  register: (testFunctions: TestFunctions) => void
-  fetchAuthorizationCode: () => Promise<AuthorizationCodeDetails>
-  fetchAccessToken: (details: AccessTokenDetails) => Promise<AccessTokenResponse>
-  fetchRefreshToken: (details: RefreshTokenDetails) => Promise<AccessTokenResponse>
-  cleanup: () => Promise<void>
+export type AuthorizationCodeRequestOptions = {
+  shouldConsent?: boolean
+  scopes?: string[]
+  extraParams?: {
+    [k: string]: string
+  }
 }
